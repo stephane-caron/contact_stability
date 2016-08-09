@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+    <name>contact_stability</name>
+    <version>0.1.0</version>
+    <description>Compute wrench cones and support areas for multi-contact stability</description>
+    <maintainer email="stephane.caron@normalesup.org">Stéphane Caron</maintainer>
+    <license>GPLv3</license>
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>rospy</build_depend>
+    <build_depend>roslib</build_depend>
+    <build_depend>message_generation</build_depend>
+    <run_depend>rospy</run_depend>
+    <run_depend>roslib</run_depend>
+    <run_depend>message_runtime</run_depend>
+    <export></export>
+</package>

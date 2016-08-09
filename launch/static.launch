@@ -1,0 +1,5 @@
+<launch>
+
+    <node pkg="contact_stability" type="static_server.py" name="static_stability" output="screen" />
+
+</launch>

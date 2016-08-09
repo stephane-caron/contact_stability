@@ -1,0 +1,5 @@
+<launch>
+
+    <node pkg="contact_stability" type="pendular_server.py" name="pendular_stability" output="screen" />
+
+</launch>

@@ -1,0 +1,7 @@
+<launch>
+
+    <include file="$(find contact_stability)/launch/pendular.launch" />
+
+    <include file="$(find contact_stability)/launch/static.launch" />
+
+</launch>

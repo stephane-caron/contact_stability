@@ -1,0 +1,7 @@
+Contact[] contacts
+float64 mass
+geometry_msgs/Point p_in
+float64 z_out
+---
+geometry_msgs/Point[] vertices
+geometry_msgs/Point[] rays
