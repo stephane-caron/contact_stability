@@ -7,8 +7,8 @@ ROS package for checking multi-contact stability.
 - **Pendular ZMP support areas:** in locomotion, most of today's walking
   pattern generators regulate the angular momentum to a constant value (Linear
   Pendulum Mode). In this case, the motion is contact stable if and only if the
-  whole-body ZMP lies in the [pendular ZMP support
-  area](http://arxiv.org/abs/1510.03232).
+  whole-body ZMP lies in the pendular ZMP support area
+  [[1](http://arxiv.org/abs/1510.03232)].
 
 - **Static-equilibrium COM polygon:** when the robot is not moving, contact
   stability is enforced if and only if the (horizontal projection of the)
@@ -16,18 +16,18 @@ ROS package for checking multi-contact stability.
 
 ## Algorithms
 
-- **Bretl and Lall:** the algorithm introduced by Bretl and Lall in [this
-  paper](http://dx.doi.org/10.1109/TRO.2008.2001360), and used in a wealth of
-  subsequent works [[1](https://dx.doi.org/10.1177/0278364914527855),
-  [2](http://dx.doi.org/10.1109/TMECH.2015.2409479),
-  [3](https://hal.archives-ouvertes.fr/hal-01201060/)]. It can also be applied
-  to [ZMP support areas](http://arxiv.org/abs/1510.03232).
+- **Bretl and Lall:** the algorithm introduced by Bretl and Lall
+  [[2](http://dx.doi.org/10.1109/TRO.2008.2001360)], and used in a wealth of
+  subsequent works [[3](https://dx.doi.org/10.1177/0278364914527855),
+  [4](http://dx.doi.org/10.1109/TMECH.2015.2409479),
+  [5](https://hal.archives-ouvertes.fr/hal-01201060/)]. It can also be applied
+  to ZMP support areas [[1](http://arxiv.org/abs/1510.03232)].
 
 - **Double-description method:** an algorithm used to convert between halfspace
   and vertex representation of polyhedral sets. Has been applied to compute the
-  static-equilibrium polygon [[4](https://scaron.info/research/ijhr-2016.html)]
+  static-equilibrium polygon [[6](https://scaron.info/research/ijhr-2016.html)]
   as well as the pendular ZMP support area
-  [[5](http://arxiv.org/abs/1510.03232)]. It is faster but less numerically
+  [[1](http://arxiv.org/abs/1510.03232)]. It is faster but less numerically
   stable than the other method (see e.g. the [Appendix in this
   paper](https://hal.archives-ouvertes.fr/hal-01349880)).
 
@@ -101,10 +101,5 @@ req = contact_stability.srv.SupportAreaRequest(
 res = compute_support_area(req)
 ```
 
-The ``res`` object then contains the vertex representation of your support
-area:
-
-```python
-vertices = [array([v.x, v.y, v.z]) for v in res.vertices]
-rays = [array([r.x, r.y, r.z]) for r in res.rays]
-```
+The ``res`` object then contains the vertex representation ``res.vertices`` and
+``res.rays`` of your support area.
