@@ -18,8 +18,6 @@
 # You should have received a copy of the GNU General Public License along with
 # contact_stability. If not, see <http://www.gnu.org/licenses/>.
 
-ALGORITHM = 'bretl'
-
 import numpy
 import openravepy
 import os
@@ -28,7 +26,20 @@ import rospy
 import time
 import sys
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../pymanoid')
+from contact_stability.srv import PendularArea, PendularAreaResponse
+from geometry_msgs.msg import Point
+from numpy import array
+
+# Settings
+ALGORITHM = 'bretl'
+NB_WORKERS = 4
+
+try:
+    from pymanoid import register_env, Contact, ContactSet
+except ImportError:
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    sys.path.append(script_path + '/../pymanoid')
+    from pymanoid import register_env, Contact, ContactSet
 
 if ALGORITHM == 'bretl':
     from contact_stability import compute_pendular_area_bretl \
@@ -37,14 +48,9 @@ else:  # ALGORITHM == 'cdd'
     from contact_stability import compute_pendular_area_cdd \
         as _compute_pendular_area
 
-from contact_stability.srv import SupportArea, SupportAreaResponse
-from geometry_msgs.msg import Point
-from numpy import array
-from pymanoid import register_env, Contact, ContactSet
 
-
+# Global variables
 last_request_time = 0.  # [s]
-nb_workers = 4
 timeout = 1  # [s]
 
 
@@ -70,7 +76,7 @@ def convert_contact_set(req_contacts):
 
 def compute_support_area(req):
     global last_request_time
-    area = SupportAreaResponse(vertices=[], rays=[])
+    area = PendularAreaResponse(vertices=[], rays=[])
     try:
         start_time = time.time()
         last_request_time = start_time
@@ -98,7 +104,7 @@ def compute_support_area(req):
 
 
 if __name__ == "__main__":
-    pool = pebble.process.Pool(workers=nb_workers, )
+    pool = pebble.process.Pool(workers=NB_WORKERS, )
     rave_env = openravepy.Environment()
     register_env(rave_env)
     rospy.init_node('pendular_stability',
@@ -113,6 +119,6 @@ if __name__ == "__main__":
     #
     s = rospy.Service(
         '/contact_stability/pendular/compute_support_area',
-        SupportArea, compute_support_area)
+        PendularArea, compute_support_area)
     rospy.spin()
     rospy.signal_shutdown("[pendular_server.py] shutdown")

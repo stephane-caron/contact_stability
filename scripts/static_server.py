@@ -18,8 +18,6 @@
 # You should have received a copy of the GNU General Public License along with
 # contact_stability. If not, see <http://www.gnu.org/licenses/>.
 
-ALGORITHM = 'bretl'
-
 import pebble
 import openravepy
 import os
@@ -28,7 +26,21 @@ import rospy
 import time
 import sys
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../pymanoid')
+from contact_stability.srv import StaticArea
+from contact_stability.srv import StaticAreaResponse
+from geometry_msgs.msg import Point
+
+# Settings
+ALGORITHM = 'bretl'
+CDD_TIMEOUT = 1  # [s]
+NB_WORKERS = 4
+
+try:
+    from pymanoid import register_env, ContactSet, Contact
+except ImportError:
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    sys.path.append(script_path + '/../pymanoid')
+    from pymanoid import register_env, ContactSet, Contact
 
 if ALGORITHM == 'bretl':
     from contact_stability import compute_static_area_bretl \
@@ -37,15 +49,9 @@ else:  # ALGORITHM == 'cdd'
     from contact_stability import compute_static_area_cdd \
         as _compute_static_area
 
-from contact_stability.srv import StaticStabilityArea
-from contact_stability.srv import StaticStabilityAreaResponse
-from geometry_msgs.msg import Point
-from pymanoid import register_env, ContactSet, Contact
 
-
-cdd_timeout = 1  # [s]
+# Global variables
 last_request_time = 0.  # [s]
-nb_workers = 4
 
 
 def compute_static_area(G, F, mass, z_out, req_time):
@@ -74,14 +80,14 @@ def compute_support_area(req):
     start_time = time.time()
     last_request_time = start_time
     contacts = convert_contact_set(req.contacts)
-    area = StaticStabilityAreaResponse(vertices=[])
+    area = StaticAreaResponse(vertices=[])
     last_request_time = start_time
     G = contacts.compute_grasp_matrix(numpy.zeros(3))
     F = -contacts.compute_stacked_wrench_cones()
     task = pool.schedule(
         compute_static_area,
         args=(G, F, req.mass, req.z_out, start_time),
-        timeout=cdd_timeout)
+        timeout=CDD_TIMEOUT)
     try:
         vertices, rays = task.get()
         area.vertices = [Point(v[0], v[1], v[2]) for v in vertices]
@@ -91,18 +97,18 @@ def compute_support_area(req):
         rospy.logwarn("cdd: %s" % e)
     except pebble.TimeoutError:
         rospy.logwarn("cdd took more than %d seconds (%.2f s)" %
-                      (cdd_timeout, time.time() - start_time))
+                      (CDD_TIMEOUT, time.time() - start_time))
     return area
 
 
 if __name__ == "__main__":
-    pool = pebble.process.Pool(nb_workers)
+    pool = pebble.process.Pool(NB_WORKERS)
     rave_env = openravepy.Environment()
     register_env(rave_env)
     rospy.init_node('static_stability',  # log_level=rospy.DEBUG,
                     disable_signals=True)  # see note in other service
     s = rospy.Service(
         '/contact_stability/static/compute_support_area',
-        StaticStabilityArea, compute_support_area)
+        StaticArea, compute_support_area)
     rospy.spin()
     rospy.signal_shutdown("[static_server.py] shutdown")
