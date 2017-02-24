@@ -4,22 +4,22 @@ ROS package for checking multi-contact stability.
 
 ## Criteria
 
-- **Pendular ZMP support areas:** in locomotion, most of today's walking
-  pattern generators regulate the angular momentum to a constant value (Linear
-  Pendulum Mode). In this case, the motion is contact stable if and only if the
-  whole-body ZMP lies in the pendular ZMP support area
-  [[1](http://arxiv.org/abs/1510.03232)].
+- **Pendular ZMP support areas:** most of today's walking pattern generators
+  regulate the angular momentum to a constant value (Linear Pendulum Mode). In
+  this case, the motion is contact stable if and only if the whole-body ZMP
+  lies in the pendular ZMP support area [[1](http://arxiv.org/abs/1510.03232)].
 
 - **Static-equilibrium COM polygon:** when the robot is not moving, contact
   stability is enforced if and only if the (horizontal projection of the)
-  center of mass lies in this polygon.
+  center of mass lies in this polygon
+  [[2](http://doai.io/10.1109/TRO.2008.2001360)].
 
 ## Algorithms
 
 - **Bretl and Lall:** the algorithm introduced by Bretl and Lall
-  [[2](http://dx.doi.org/10.1109/TRO.2008.2001360)], and used in a wealth of
-  subsequent works [[3](https://dx.doi.org/10.1177/0278364914527855),
-  [4](http://dx.doi.org/10.1109/TMECH.2015.2409479),
+  [[2](http://doai.io/10.1109/TRO.2008.2001360)], and used in a wealth of
+  subsequent works [[3](http://doai.io/10.1177/0278364914527855),
+  [4](http://doai.io/10.1109/TMECH.2015.2409479),
   [5](https://hal.archives-ouvertes.fr/hal-01201060/)]. It can also be applied
   to ZMP support areas [[1](http://arxiv.org/abs/1510.03232)].
 
